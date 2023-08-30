@@ -34,16 +34,16 @@ const fetchAndDisplayPokemon = async () => {
     pokedex.innerHTML = pokemonHTMLString;
 };
 
-const generatePopupHtml = (pokemonData, type, stats) => {
+const generatePopupHtml = ({ pokemonName, type, stats, sprite, height, weight }) => {
     const statHtml = stats.map(stat => `<p>${capitalizeFirstLetter(stat.stat.name)}: ${stat.base_stat}</p>`).join('');
     return `
         <div class="popup">
             <div class="card">
                 <button id="closeBtn" onclick="closePopup()">Close</button>
-                <img class="card-image" src="${pokemonData.sprites.front_default}" alt="${pokemonData.name}"/>
+                <img class="card-image" src="${sprite}" alt="${pokemonName}"/>
                 <div class="card-content">
-                    <h2 class="card-title">${pokemonData.name}</h2>
-                    <p><span class="additional-info">Type: ${type} | Height: ${pokemonData.height} | Weight: ${pokemonData.weight}</span></p>
+                    <h2 class="card-title">${pokemonName}</h2>
+                    <p><span class="additional-info">Type: ${type} | Height: ${height} | Weight: ${weight}</span></p>
                     <div class="stats">
                         ${statHtml}
                     </div>
@@ -53,14 +53,29 @@ const generatePopupHtml = (pokemonData, type, stats) => {
     `;
 };
 
+
 const displayPokemanPopup = (pokemonData) => {
     const type = pokemonData.types.map(type => capitalizeFirstLetter(type.type.name)).join(', ');
     const stats = pokemonData.stats;
-    const popupHtml = generatePopupHtml(pokemonData, type, stats);
+
+    const capitalizedPokemonName = capitalizeFirstLetter(pokemonData.name);
+
+    const popupHtml = generatePopupHtml({
+        pokemonName: capitalizedPokemonName,
+        type: type,
+        stats: stats,
+        sprite: pokemonData.sprites.front_default,
+        height: pokemonData.height,
+        weight: pokemonData.weight
+    });
 
     popupContainer.innerHTML = popupHtml;
     popupContainer.classList.add('popup-container');
 };
+
+
+
+
 
 
 
