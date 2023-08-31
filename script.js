@@ -2,6 +2,7 @@ const pokedex = document.getElementById('pokedex');
 const popupContainer = document.getElementById('popupContainer');
 const cachedPokemon = {};
 
+
 const fetchData = async (url) => {
     const response = await fetch(url);
     return response.json();
@@ -104,13 +105,12 @@ fetchAndDisplayPokemon();
 
 
 
-
+let player1Button = document.getElementsByClassName('player1')[0]
+let player2Button = document.getElementsByClassName('player2')[0]
 
 
 // pokeflips
 async function pokeFlipsFeature() {
-let player1Button =document.getElementsByClassName('player1')[0]
-    let player2Button = document.getElementsByClassName('player2')[0]
     const url = `https://pokeapi.co/api/v2/pokemon?limit=150`;
     const data = await fetchData(url);
     const pokemon = data.results.map((data, index) => ({
