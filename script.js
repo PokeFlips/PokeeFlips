@@ -34,7 +34,7 @@ const fetchAndDisplayPokemon = async () => {
     pokedex.innerHTML = pokemonHTMLString;
 };
 
-const generatePopupHtml = (pokemonData, type, stats) => {
+const generatePopupHtml = ({ pokemonName, type, stats, sprite, height, weight }) => {
     
 
     const statHtml = stats.map(stat => `<p>${capitalizeFirstLetter(stat.stat.name)}: ${stat.base_stat}</p>`).join('');
@@ -199,7 +199,6 @@ pokeFlipsFeature()
     
  }
 
- 
 
 
 
