@@ -1,6 +1,10 @@
 const pokedex = document.getElementById('pokedex');
 const popupContainer = document.getElementById('popupContainer');
 const cachedPokemon = {};
+const playersState = {
+    player1:false,
+    player2:false
+}
 
 
 const fetchData = async (url) => {
@@ -122,12 +126,20 @@ async function pokeFlipsFeature() {
 
 
     player1Button.addEventListener('click', async (e) => {
-      const shuffledArr = pokemon.sort(() => Math.random() - 0.5);
+    playersState.player1 = true
+      let sectionContainer = document.getElementsByClassName('player1-player2-box')[0]
+        const shuffledArr = pokemon.sort(() => Math.random() - 0.5);
         let pokemonId = shuffledArr[0].id
         let pokemonName = shuffledArr[0].name
         let pokemonImg = shuffledArr[0].image
+        const pokemonInfoUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`
+        const pokemonInfo = await  fetchData(pokemonInfoUrl)
+        const pokemon1Stats = pokemonInfo.stats
+     
+       
+      
         li = document.createElement('li')
-        li.classList.add('pokeeFlip-card')
+        li.classList.add('pokeeFlip-card-p1')
         
         div = document.createElement('div')
         div.setAttribute('id', 'player1-id')
@@ -136,28 +148,54 @@ async function pokeFlipsFeature() {
 
         img = document.createElement('img')
         img.src = pokemonImg
-        li.classList.add('pokeeFlip-img')
+        li.classList.add('pokeeFlip-img-p1')
         li.appendChild(img)
         
         
         p = document.createElement('p')
         p.textContent = pokemonName 
-        p.classList.add('pokeeFlip-p')
+        p.classList.add('pokeeFlip-p-p1')
         
         li.appendChild(p)
         document.body.appendChild(li)
+        sectionContainer.appendChild(li)
         const player1Id = document.getElementById('player1-id'); // Define player1Id here
         console.log(player1Id)
+
+        for (const stat of pokemon1Stats) { // looping through stats to display stats on card
+            let div = document.createElement('div')
+            div.classList.add('abilities')
+            div.getElementsByClassName('')
+            div.textContent = stat.stat.name
+            div.textContent +=  ` : ${stat.base_stat}`
+            document.body.appendChild(div)
+            console.log(stat.stat.name)
+            console.log(stat.base_stat)
+            let abilitiesCollection = document.getElementsByTagName('abilities')
+            li.appendChild(div)
+        }
+    
+       
+
+        
     }, { once: true })
     
-    player2Button.addEventListener('click',async (e) => {
+    player2Button.addEventListener('click', async (e) => {
+        let sectionContainer = document.getElementsByClassName('player1-player2-box')[0]
+
         const shuffledArr = pokemon.sort(() => Math.random() - 0.5); 
         let pokemonId = shuffledArr[0].id
         let pokemonName  = shuffledArr[0].name
         let pokemonImg = shuffledArr[0].image
-        
+
+        const pokemonInfoUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`
+        const pokemonInfo = await  fetchData(pokemonInfoUrl)
+        const pokemon2Stats = pokemonInfo.stats
+        console.log(pokemon2Stats)
+      
+    
         li = document.createElement('li')
-        li.classList.add('pokeeFlip-card')
+        li.classList.add('pokeeFlip-card-p2')
            
         div = document.createElement('div')
         div.setAttribute('id', 'player2-id')
@@ -167,19 +205,33 @@ async function pokeFlipsFeature() {
 
         img = document.createElement('img')
         img.src = pokemonImg
-        li.classList.add('pokeeFlip-img')
+        li.classList.add('pokeeFlip-img-p2')
         li.appendChild(img)
         
 
         p = document.createElement('p')
         p.textContent = pokemonName
-        p.classList.add('pokeeFlip-p')
+        p.classList.add('pokeeFlip-p-p1')
         
         li.appendChild(p)
         document.body.appendChild(li)
+        sectionContainer.appendChild(li)
         const player1Id = document.getElementById('player1-id'); // Define player1Id here
         const player2Id = document.getElementById('player2-id'); // Define player2Id here
-        console.log(player2Id)
+        console.log(player2Id,player1Id)
+
+        for (const stat of pokemon2Stats) { // looping through stats to display stats on card
+            let div = document.createElement('div')
+            div.classList.add('abilities')
+            div.getElementsByClassName('')
+            div.textContent = stat.stat.name
+            div.textContent +=  ` : ${stat.base_stat}`
+            document.body.appendChild(div)
+            console.log(stat.stat.name)
+            console.log(stat.base_stat)
+            let abilitiesCollection = document.getElementsByTagName('abilities')
+            li.appendChild(div)
+        }
         pokeFlipsFight(player1Id.textContent, player2Id.textContent);
     },{once : true})
 
@@ -187,15 +239,78 @@ async function pokeFlipsFeature() {
 
 pokeFlipsFeature()
 
- async function pokeFlipsFight(player1Id, player2Id) {
-   console.log(player1Id, player2Id)
-     
+
+let playerBox = document.getElementsByClassName('player1-player2-box')
+
+async function pokeFlipsFight(player1Id, player2Id) {
+    let player1Average = 0
+    let player2Average = 0
+    console.log(player1Id, player2Id)
+    let fighBtn = document.getElementById('fight-btn')
+    
      const player1_url = `https://pokeapi.co/api/v2/pokemon/${player1Id}`;
-     const player1_data = await fetchData( player1_url );
-     console.log(player1_data .stats)
+     const player1_data = await fetchData(player1_url);
+    console.log(player1_data)
      const  player2_url  = `https://pokeapi.co/api/v2/pokemon/${player2Id}`;
-     const player2_data = await fetchData( player2_url );
-     console.log(player2_data.stats)
+     const player2_data = await fetchData(player2_url);
+    
+
+    for (let i = 0; i < player1_data.stats.length; i++){
+        player1Average += player1_data.stats[i].base_stat
+        player2Average +=  player2_data.stats[i].base_stat
+    }
+     console.log(player2Average,player1Average)
+     
+     fighBtn.addEventListener('click', (e => {
+         
+        if (player1Average === player2Average) {
+            let section = document.createElement('section')
+            p = document.createElement('p')
+            p.textContent = 'draw'
+            section.appendChild(p)
+           
+            document.body.appendChild(section)
+        }
+        else if (player1Average > player2Average) {
+            div = document.createElement('div')
+            div.classList.add('winner')
+            console.log(`${player1_data.name}` + ' wins')
+            let img = document.createElement('img')
+            img.src = player1_data.sprites.front_default
+            div.appendChild(img)
+            let p = document.createElement('p')
+            p.textContent = `${player1_data.name}` + ' wins'
+            div.appendChild(p)
+            document.body.appendChild(div)  
+         }
+         else {
+            console.log(`${player2_data.name}` + ' wins')
+            div = document.createElement('div')
+            div.classList.add('winner')
+            console.log(`${player1_data.name}` + ' wins')
+            let img = document.createElement('img')
+            img.src = player2_data.sprites.front_default
+            div.appendChild(img)
+            let p = document.createElement('p')
+            p.textContent = `${player2_data.name}` + ' wins'
+            div.appendChild(p)
+            document.body.appendChild(div)
+        }
+
+        reset = document.createElement('button')
+        reset.classList.add('reset')
+        reset.textContent = 'Reset'
+         document.body.appendChild(reset)
+         let section = document.createElement('section')
+         section.appendChild(reset)
+         document.body.appendChild(section)
+        let resetbtn = document.getElementsByClassName('reset')[0]
+
+         resetbtn.addEventListener('click', (e) => {
+            window.location.reload();
+            })
+         
+     }),{once : true})
     
  }
 
