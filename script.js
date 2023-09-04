@@ -114,6 +114,8 @@ let player2Button = document.getElementsByClassName('player2')[0]
 
 
 // pokeflips
+let playerTwoId = {} // saving player two data so we can pass value to first button event
+
 async function pokeFlipsFeature() {
     const url = `https://pokeapi.co/api/v2/pokemon?limit=150`;
     const data = await fetchData(url);
@@ -123,7 +125,6 @@ async function pokeFlipsFeature() {
         image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`,
     }));
     console.log(pokemon)
-
 
     player1Button.addEventListener('click', async (e) => {
     playersState.player1 = true
@@ -136,7 +137,6 @@ async function pokeFlipsFeature() {
         const pokemonInfo = await  fetchData(pokemonInfoUrl)
         const pokemon1Stats = pokemonInfo.stats
      
-       
       
         li = document.createElement('li')
         li.classList.add('pokeeFlip-card-p1')
@@ -160,29 +160,25 @@ async function pokeFlipsFeature() {
         document.body.appendChild(li)
         sectionContainer.appendChild(li)
         const player1Id = document.getElementById('player1-id'); // Define player1Id here
-        console.log(player1Id)
-
+       console.log(playerTwoId)
         for (const stat of pokemon1Stats) { // looping through stats to display stats on card
             let div = document.createElement('div')
             div.classList.add('abilities')
-            div.getElementsByClassName('')
             div.textContent = stat.stat.name
             div.textContent +=  ` : ${stat.base_stat}`
             document.body.appendChild(div)
             console.log(stat.stat.name)
             console.log(stat.base_stat)
-            let abilitiesCollection = document.getElementsByTagName('abilities')
             li.appendChild(div)
         }
-    
-       
+         
+        pokeFlipsFight(player1Id.textContent, playerTwoId.value);
 
-        
     }, { once: true })
+    
     
     player2Button.addEventListener('click', async (e) => {
         let sectionContainer = document.getElementsByClassName('player1-player2-box')[0]
-
         const shuffledArr = pokemon.sort(() => Math.random() - 0.5); 
         let pokemonId = shuffledArr[0].id
         let pokemonName  = shuffledArr[0].name
@@ -219,7 +215,8 @@ async function pokeFlipsFeature() {
         const player1Id = document.getElementById('player1-id'); // Define player1Id here
         const player2Id = document.getElementById('player2-id'); // Define player2Id here
         console.log(player2Id,player1Id)
-
+        playerTwoId.value = player2Id.textContent
+        console.log(playerTwoId)
         for (const stat of pokemon2Stats) { // looping through stats to display stats on card
             let div = document.createElement('div')
             div.classList.add('abilities')
@@ -229,7 +226,6 @@ async function pokeFlipsFeature() {
             document.body.appendChild(div)
             console.log(stat.stat.name)
             console.log(stat.base_stat)
-            let abilitiesCollection = document.getElementsByTagName('abilities')
             li.appendChild(div)
         }
         pokeFlipsFight(player1Id.textContent, player2Id.textContent);
@@ -240,14 +236,12 @@ async function pokeFlipsFeature() {
 pokeFlipsFeature()
 
 
-let playerBox = document.getElementsByClassName('player1-player2-box')
-
+// calculates a winner
 async function pokeFlipsFight(player1Id, player2Id) {
     let player1Average = 0
     let player2Average = 0
     console.log(player1Id, player2Id)
-    let fighBtn = document.getElementById('fight-btn')
-    
+    let battleBtn = document.getElementById('fight-btn')
      const player1_url = `https://pokeapi.co/api/v2/pokemon/${player1Id}`;
      const player1_data = await fetchData(player1_url);
     console.log(player1_data)
@@ -261,7 +255,7 @@ async function pokeFlipsFight(player1Id, player2Id) {
     }
      console.log(player2Average,player1Average)
      
-     fighBtn.addEventListener('click', (e => {
+     battleBtn.addEventListener('click', (e => {
          
         if (player1Average === player2Average) {
             let section = document.createElement('section')
